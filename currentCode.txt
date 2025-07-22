@@ -1,0 +1,176 @@
+int rightbackwardPin = 12;
+int rightforwardPin = 13;
+int leftbackwardPin = 10;
+int leftforwardPin = 9;
+int rightMotorSpeedPin = 11;
+int leftMotorSpeedPin = 11;
+
+
+int rearrightbackwardPin = 6;
+int rearrightforwardPin = 5;
+int rearleftbackwardPin = 8;
+int rearleftforwardPin = 7;
+
+const int triggerPin = 4;
+const int echoPin = 2;
+const int ledPin = 3;
+
+const int leftSensorPin = A0;
+const int rightSensorPin = A1;
+int leftSensor;
+int rightSensor;
+
+const int threshold = 50;  // Set according to your need, in cm
+const int laneLeftThreshold = 300; // left lane threshold
+const int laneRightThreshold = 300; // right lane threshold 
+
+long duration;
+long cm;
+
+void setup() {
+  Serial.begin(9600);
+  pinMode(triggerPin, OUTPUT);
+  pinMode(echoPin, INPUT);
+  //pinMode(ledPin, OUTPUT);
+
+  pinMode(leftforwardPin, OUTPUT);
+  pinMode(leftbackwardPin, OUTPUT);
+  pinMode(rightforwardPin, OUTPUT);
+  pinMode(rightbackwardPin, OUTPUT);
+  pinMode(leftMotorSpeedPin,OUTPUT); // speed pin for left; 
+  pinMode(rightMotorSpeedPin,OUTPUT);
+
+  pinMode(rearleftforwardPin, OUTPUT);
+  pinMode(rearleftbackwardPin, OUTPUT);
+  pinMode(rearrightforwardPin, OUTPUT);
+  pinMode(rearrightbackwardPin, OUTPUT);
+}
+
+void loop() {
+  leftSensor = analogRead(leftSensorPin);
+  rightSensor = analogRead(rightSensorPin);
+
+Serial.print("Left: ");
+ Serial.println(leftSensor);
+
+  Serial.print("Right: ");
+  Serial.println(rightSensor);
+
+  if((leftSensor > laneLeftThreshold) && (rightSensor > laneRightThreshold)){
+    forwardCar(0);
+    Serial.println("On road");
+  } else if ((leftSensor > laneLeftThreshold) && (rightSensor < laneRightThreshold)){
+    turnLeft(0);
+    Serial.println("Turn left");
+  } else if ((leftSensor < laneLeftThreshold)&&(rightSensor > laneRightThreshold)){
+    turnRight(0);
+    Serial.println("Turn right");
+  }else{
+    stopCar(0);
+    Serial.println("Stopp");
+  }
+  /*cm = getDistance();
+
+  if (cm < threshold) {
+    //digitalWrite(ledPin, HIGH);
+    stopCar(100);
+    turnRight(500);
+
+  } else {
+    //digitalWrite(ledPin, LOW);
+    forwardCar(200);
+  }
+
+  Serial.print("Distance: ");
+  Serial.print(cm);
+  Serial.println(" cm");
+
+  delay(100);
+  */
+
+  
+}
+
+//-------------------- Functions ----------------------
+
+long getDistance() {
+  digitalWrite(triggerPin, LOW);
+  delayMicroseconds(2);
+  digitalWrite(triggerPin, HIGH);
+  delayMicroseconds(10);
+  digitalWrite(triggerPin, LOW);
+  duration = pulseIn(echoPin, HIGH);
+  return duration / 58;
+}
+
+void forwardCar(int delay_time) {
+  analogWrite(leftMotorSpeedPin, 200);
+  analogWrite(rightMotorSpeedPin, 200);
+  digitalWrite(leftforwardPin, HIGH);
+  digitalWrite(leftbackwardPin, LOW);
+  digitalWrite(rightforwardPin, HIGH);
+  digitalWrite(rightbackwardPin, LOW);
+
+  digitalWrite(rearleftforwardPin, HIGH);
+  digitalWrite(rearleftbackwardPin, LOW);
+  digitalWrite(rearrightforwardPin, HIGH);
+  digitalWrite(rearrightbackwardPin, LOW);
+
+  delay(delay_time);
+}
+
+void backwardCar(int delay_time) {
+  digitalWrite(leftforwardPin, LOW);
+  digitalWrite(leftbackwardPin, HIGH);
+  digitalWrite(rightforwardPin, LOW);
+  digitalWrite(rightbackwardPin, HIGH);
+
+  digitalWrite(rearleftforwardPin, LOW);
+  digitalWrite(rearleftbackwardPin, HIGH);
+  digitalWrite(rearrightforwardPin, LOW);
+  digitalWrite(rearrightbackwardPin, HIGH);
+
+  delay(delay_time);
+}
+
+void stopCar(int delay_time) {
+  digitalWrite(leftforwardPin, LOW);
+  digitalWrite(leftbackwardPin, LOW);
+  digitalWrite(rightforwardPin, LOW);
+  digitalWrite(rightbackwardPin, LOW);
+
+  digitalWrite(rearleftforwardPin, LOW);
+  digitalWrite(rearleftbackwardPin, LOW);
+  digitalWrite(rearrightforwardPin, LOW);
+  digitalWrite(rearrightbackwardPin, LOW);
+
+  delay(delay_time);
+}
+
+void turnLeft(int delay_time) {
+  digitalWrite(leftforwardPin, LOW);
+  digitalWrite(leftbackwardPin, HIGH);
+  digitalWrite(rightforwardPin, HIGH);
+  digitalWrite(rightbackwardPin, LOW);
+
+  digitalWrite(rearleftforwardPin, LOW);
+  digitalWrite(rearleftbackwardPin, HIGH);
+  digitalWrite(rearrightforwardPin, HIGH);
+  digitalWrite(rearrightbackwardPin, LOW);
+
+  delay(delay_time);
+}
+
+void turnRight(int delay_time) {
+  digitalWrite(leftforwardPin, HIGH);
+  digitalWrite(leftbackwardPin, LOW);
+  digitalWrite(rightforwardPin, LOW);
+  digitalWrite(rightbackwardPin, HIGH);
+
+  digitalWrite(rearleftforwardPin, HIGH);
+  digitalWrite(rearleftbackwardPin, LOW);
+  digitalWrite(rearrightforwardPin, LOW);
+  digitalWrite(rearrightbackwardPin, HIGH);
+
+  delay(delay_time);
+}
