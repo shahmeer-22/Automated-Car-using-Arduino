@@ -50,8 +50,10 @@ The vehicle automatically aligns itself within the lane and stops or reroutes up
 * How to collaborate, debug, and stay consistent under pressure
 
 ## Sneak Peek
+![Car Visuals](carrrrr.jpg)
 
-!
+### Circuit Diagram
+![Circuit Diagram](circuitDiagram2.png)
 
 ## Future Improvements
 
